@@ -351,7 +351,6 @@ class LogStash::Agent
     end
   end
 
-
   public
   def run_with_config(config)
     @plugins_mutex.synchronize do
@@ -381,6 +380,11 @@ class LogStash::Agent
         raise "Must have both inputs and outputs configured."
       end
 
+      # Do any extra validation if the plugins want to.
+      [@inputs, @filters, @outputs].flatten.each do |plugin|
+        plugin.validate_config
+      end
+
       # NOTE(petef) we should use a SizedQueue here (w/config params for size)
       @filter_queue = SizedQueue.new(10)
       @output_queue = LogStash::MultiQueue.new
@@ -396,7 +400,7 @@ class LogStash::Agent
       if @filters.length > 0
         @filters.each do |filter|
           filter.logger = @logger
-          filter.register
+          filter.validate_config
         end
         @filterworkers = {}
         2.times do |n|
@@ -520,7 +524,6 @@ class LogStash::Agent
         deleted_filters = @filters - reloaded_filters
         deleted_outputs = @outputs - reloaded_outputs
 
-
         # Handle shutdown of input and output plugins
         obsolete_plugins = {}
         [deleted_inputs].flatten.each do |p|
@@ -547,7 +550,7 @@ class LogStash::Agent
         (@filters - deleted_filters).each(&:reload)
 
         # Also remove filters
-        deleted_filters.each {|f| obsolete_plugins[f] = nil}
+        deleted_filters.each { |f| obsolete_plugins[f] = nil }
 
         if obsolete_plugins.size > 0
           @logger.info("Stopping removed plugins:", :plugins => obsolete_plugins.keys)
@@ -561,7 +564,7 @@ class LogStash::Agent
             @logger.info("Starting new filters", :plugins => new_filters)
             new_filters.each do |f|
               f.logger = @logger
-              f.register
+              #f.register
             end
           end
           @filters = reloaded_filters
@@ -638,7 +641,7 @@ class LogStash::Agent
   def run_input(input, queue)
     LogStash::Util::set_thread_name("input|#{input.to_s}")
     input.logger = @logger
-    input.register
+    #input.register
     @logger.info("Input registered", :plugin => input)
     @ready_queue << input
     done = false
@@ -679,7 +682,7 @@ class LogStash::Agent
   def run_output(output, queue)
     LogStash::Util::set_thread_name("output|#{output.to_s}")
     output.logger = @logger
-    output.register
+    #output.register
     @logger.info("Output registered", :plugin => output)
     @ready_queue << output
 

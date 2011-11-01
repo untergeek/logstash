@@ -3,13 +3,13 @@ require "logstash/logging"
 require "logstash/config/mixin"
 
 class LogStash::Plugin
+  include LogStash::Config::Mixin
   attr_accessor :params
   attr_accessor :logger
 
   public
   def hash
-    params.hash ^
-    self.class.name.hash
+    params.hash ^ self.class.name.hash
   end
 
   public
@@ -91,4 +91,12 @@ class LogStash::Plugin
   def to_s
     return "#{self.class.name}: #{@params}"
   end
+
+  # Perform any additional config validation on this plugin
+  # This is mainly aimed at performing any startup config validation
+  # that can't be performed by the config :validate features.
+  public
+  def validate_config
+    # Nothing by default
+  end # def validate
 end # class LogStash::Plugin

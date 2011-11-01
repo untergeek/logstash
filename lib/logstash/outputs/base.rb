@@ -7,8 +7,6 @@ require "logstash/config/mixin"
 require "uri"
 
 class LogStash::Outputs::Base < LogStash::Plugin
-  include LogStash::Config::Mixin
-
   config_name "output"
 
   # The type to act on. If a type is given, then this output will only
@@ -28,10 +26,11 @@ class LogStash::Outputs::Base < LogStash::Plugin
     config_init(params)
   end
 
-  public
-  def register
-    raise "#{self.class}#register must be overidden"
-  end # def register
+  # TODO(sissel): Deprecated, remove in 1.2.0
+  #public
+  #def register
+    #raise "#{self.class}#register must be overidden"
+  #end # def register
 
   public
   def receive(event)

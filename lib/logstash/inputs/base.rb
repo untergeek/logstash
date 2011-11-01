@@ -6,7 +6,6 @@ require "logstash/config/mixin"
 
 # This is the base class for logstash inputs.
 class LogStash::Inputs::Base < LogStash::Plugin
-  include LogStash::Config::Mixin
   config_name "input"
 
   # Label this input with a type.
@@ -54,15 +53,22 @@ class LogStash::Inputs::Base < LogStash::Plugin
     @tags ||= []
   end # def initialize
 
-  public
-  def register
-    raise "#{self.class}#register must be overidden"
-  end # def register
-
+  # TODO(sissel): Deprecated, remove in 1.2.0
+  #public
+  #def register
+    #raise "#{self.class}#register must be overidden"
+  #end # def register
+  
   public
   def tag(newtag)
     @tags << newtag
   end # def tag
+
+  # Your plugin must implement this method.
+  public
+  def run
+    raise "#{self.class}#run must be overridden"
+  end # def run
 
   protected
   def to_event(raw, source)

@@ -4,8 +4,6 @@ require "logstash/plugin"
 require "logstash/config/mixin"
 
 class LogStash::Filters::Base < LogStash::Plugin
-  include LogStash::Config::Mixin
-
   config_name "filter"
 
   # The type to act on. If a type is given, then this filter will only
@@ -46,10 +44,11 @@ class LogStash::Filters::Base < LogStash::Plugin
     config_init(params)
   end # def initialize
 
-  public
-  def register
-    raise "#{self.class}#register must be overidden"
-  end # def register
+  # TODO(sissel): Deprecated, remove in 1.2.0
+  #public
+  #def register
+    #raise "#{self.class}#register must be overidden"
+  #end # def register
 
   public
   def filter(event, input_queue)
