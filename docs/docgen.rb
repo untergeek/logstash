@@ -14,6 +14,21 @@ $: << File.join(File.dirname(__FILE__), "..", "lib")
 
 require "logstash/version"
 
+# Spoof our own 'require' method to block any unnecesary code loading.
+# This is mainly necessary to avoid loading plugin dependencies during
+# doc building that we don't have installed - building the docs
+# shouldn't require special dependencies of plugins.
+module Kernel
+  alias_method :std_require, :require
+  def require(path)
+    begin 
+      std_require(path)
+    rescue LoadError
+      # Ignore
+    end
+  end # def require
+end # module Kernel
+
 class LogStashConfigDocGenerator
   COMMENT_RE = /^ *#(?: (.*)| *$)/
 
