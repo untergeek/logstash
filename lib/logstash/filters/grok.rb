@@ -1,6 +1,7 @@
 require "logstash/filters/base"
 require "logstash/namespace"
 require "set"
+require "grok-pure" # rubygem 'jls-grok'
 
 # Parse arbitrary text and structure it.
 # Grok is currently the best way in logstash to parse crappy unstructured log
@@ -90,7 +91,6 @@ class LogStash::Filters::Grok < LogStash::Filters::Base
 
   public
   def register
-    require "grok-pure" # rubygem 'jls-grok'
 
     @patternfiles = []
     @patterns_dir += @@patterns_path.to_a

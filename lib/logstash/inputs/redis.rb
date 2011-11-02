@@ -1,5 +1,6 @@
 require "logstash/inputs/base"
 require "logstash/namespace"
+require 'redis'
 
 # Read events from a redis. Supports both redis channels and also redis lists
 # (using BLPOP)
@@ -51,7 +52,6 @@ class LogStash::Inputs::Redis < LogStash::Inputs::Base
 
   public
   def register
-    require 'redis'
     @redis = nil
     @redis_url = "redis://#{@password}@#{@host}:#{@port}/#{@db}"
 

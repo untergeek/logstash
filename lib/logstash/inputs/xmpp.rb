@@ -1,5 +1,7 @@
 require "logstash/inputs/base"
 require "logstash/namespace"
+require 'xmpp4r' # xmpp4r gem
+require 'xmpp4r/muc/helper/simplemucclient' # xmpp4r gem
 
 # This input allows you to receive events over XMPP/Jabber.
 #
@@ -30,16 +32,12 @@ class LogStash::Inputs::Xmpp < LogStash::Inputs::Base
 
   public
   def register
-    require 'xmpp4r' # xmpp4r gem
     Jabber::debug = true if @debug
 
     @client = Jabber::Client.new(Jabber::JID.new(@user))
     @client.connect(@host) # it is ok if host is nil
     @client.auth(@password.value)
     @client.send(Jabber::Presence.new.set_type(:available))
-
-    # load the MUC Client if we are joining rooms.
-    require 'xmpp4r/muc/helper/simplemucclient' if @rooms && !@rooms.empty?
   end # def register
 
   public

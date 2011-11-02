@@ -1,5 +1,6 @@
 require "logstash/inputs/base"
 require "logstash/namespace"
+require "bunny" # rubygem 'bunny'
 
 # Pull events from an AMQP exchange.
 #
@@ -68,7 +69,6 @@ class LogStash::Inputs::Amqp < LogStash::Inputs::Base
   public
   def register
     @logger.info("Registering input #{@url}")
-    require "bunny" # rubygem 'bunny'
     @vhost ||= "/"
     @port ||= 5672
     @amqpsettings = {

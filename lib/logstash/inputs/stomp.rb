@@ -1,6 +1,7 @@
 require "logstash/inputs/base"
 require "logstash/namespace"
 require 'pp'
+require "onstomp" # gem 'onstomp'
 
 class LogStash::Inputs::Stomp < LogStash::Inputs::Base
   config_name "stomp"
@@ -39,7 +40,6 @@ class LogStash::Inputs::Stomp < LogStash::Inputs::Base
 
   public
   def register
-    require "onstomp"
     @client = OnStomp::Client.new("stomp://#{@host}:#{@port}", :login => @user, :passcode => @password.value)
     @stomp_url = "stomp://#{@user}:#{@password}@#{@host}:#{@port}/#{@destination}"
     

@@ -1,6 +1,14 @@
 require "logstash/namespace"
 require "logstash/outputs/base"
 
+# TODO(sissel): find a better way of declaring where the elasticsearch
+# libraries are
+# TODO(sissel): can skip this step if we're running from a jar.
+jarpath = File.join(File.dirname(__FILE__), "../../../vendor/**/*.jar")
+Dir[jarpath].each do |jar|
+    require jar
+end
+
 # This output lets you store logs in elasticsearch and is the most recommended
 # output for logstash. If you plan on using the logstash web interface, you'll
 # need to use this output.
@@ -59,13 +67,6 @@ class LogStash::Outputs::ElasticSearch < LogStash::Outputs::Base
 
   public
   def register
-    # TODO(sissel): find a better way of declaring where the elasticsearch
-    # libraries are
-    # TODO(sissel): can skip this step if we're running from a jar.
-    jarpath = File.join(File.dirname(__FILE__), "../../../vendor/**/*.jar")
-    Dir[jarpath].each do |jar|
-        require jar
-    end
 
     if @embedded
       %w(host cluster bind_host).each do |name|

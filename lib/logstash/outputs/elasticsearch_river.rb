@@ -4,6 +4,14 @@ require "json"
 require "uri"
 require "net/http"
 
+# TODO(sissel): find a better way of declaring where the elasticsearch
+# libraries are
+# TODO(sissel): can skip this step if we're running from a jar.
+jarpath = File.join(File.dirname(__FILE__), "../../../vendor/**/*.jar")
+Dir[jarpath].each do |jar|
+    require jar
+end
+
 # This output lets you store logs in elasticsearch. It's similar to the
 # 'elasticsearch' output but improves performance by using an AMQP server,
 # such as rabbitmq, to send data to elasticsearch.
@@ -72,13 +80,6 @@ class LogStash::Outputs::ElasticSearchRiver < LogStash::Outputs::Base
 
   public
   def register
-    # TODO(sissel): find a better way of declaring where the elasticsearch
-    # libraries are
-    # TODO(sissel): can skip this step if we're running from a jar.
-    jarpath = File.join(File.dirname(__FILE__), "../../../vendor/**/*.jar")
-    Dir[jarpath].each do |jar|
-        require jar
-    end
     prepare_river
   end
 

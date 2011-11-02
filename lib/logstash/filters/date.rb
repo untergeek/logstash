@@ -1,6 +1,7 @@
 require "logstash/filters/base"
 require "logstash/namespace"
 require "logstash/time"
+require "java"
 
 # The date filter is used for parsing dates from fields and using that
 # date or timestamp as the timestamp for the event.
@@ -79,7 +80,6 @@ class LogStash::Filters::Date < LogStash::Filters::Base
 
   public
   def register
-    require "java"
     # TODO(sissel): Need a way of capturing regexp configs better.
     @config.each do |field, value|
       next if ["add_tag", "add_field", "type"].include?(field)

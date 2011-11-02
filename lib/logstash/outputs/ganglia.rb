@@ -1,5 +1,6 @@
 require "logstash/outputs/base"
 require "logstash/namespace"
+require "gmetric"
 
 # This output allows you to pull metrics from your logs and ship them to
 # ganglia's gmond. This is heavily based on the graphite output.
@@ -33,10 +34,6 @@ class LogStash::Outputs::Ganglia < LogStash::Outputs::Base
 
   # Lifetime in seconds of this metric
   config :lifetime, :validate => :number, :default => 300
-
-  def register
-    require "gmetric"
-  end # def register
 
   public
   def receive(event)

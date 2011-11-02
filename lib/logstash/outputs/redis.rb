@@ -1,5 +1,6 @@
 require "logstash/outputs/base"
 require "logstash/namespace"
+require 'redis'
 
 # send events to a redis databse using RPUSH
 #
@@ -45,7 +46,6 @@ class LogStash::Outputs::Redis < LogStash::Outputs::Base
 
   public
   def register
-    require 'redis'
 
     # TODO remove after setting key and data_type to true
     if @queue

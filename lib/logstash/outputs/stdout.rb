@@ -1,12 +1,11 @@
 require "logstash/outputs/base"
 require "logstash/namespace"
+begin
+   require "ap"
+rescue LoadError
+end
 
 class LogStash::Outputs::Stdout < LogStash::Outputs::Base
-  begin
-     require "ap"
-  rescue LoadError
-  end
-
   config_name "stdout"
 
   # Enable debugging. Tries to pretty-print the entire event object.

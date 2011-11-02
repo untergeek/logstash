@@ -1,5 +1,6 @@
 require "logstash/namespace"
 require "logstash/outputs/base"
+require "gelf" # rubygem 'gelf'
 
 # GELF output. This is most useful if you want to use logstash
 # to output events to graylog2.
@@ -40,7 +41,6 @@ class LogStash::Outputs::Gelf < LogStash::Outputs::Base
 
   public
   def register
-    require "gelf" # rubygem 'gelf'
     option_hash = Hash.new
     #option_hash['level'] = @level
     #option_hash['facility'] = @facility

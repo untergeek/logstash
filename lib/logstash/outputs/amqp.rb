@@ -1,5 +1,6 @@
 require "logstash/outputs/base"
 require "logstash/namespace"
+require "bunny" # rubygem 'bunny'
 
 # Push events to an AMQP exchange.
 #
@@ -60,7 +61,6 @@ class LogStash::Outputs::Amqp < LogStash::Outputs::Base
 
   public
   def register
-    require "bunny" # rubygem 'bunny'
     if !MQTYPES.include?(@exchange_type)
       raise "Invalid exchange_type, #{@exchange_type.inspect}, must be one of #{MQTYPES.join(", ")}"
     end

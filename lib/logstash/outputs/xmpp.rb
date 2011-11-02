@@ -1,5 +1,6 @@
 require "logstash/outputs/base"
 require "logstash/namespace"
+require "xmpp4r"
 
 # This output allows you ship events over XMPP/Jabber.
 #
@@ -26,7 +27,6 @@ class LogStash::Outputs::Xmpp < LogStash::Outputs::Base
 
   public
   def register
-    require "xmpp4r"
     @client = connect
   end # def register
 

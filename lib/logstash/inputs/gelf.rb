@@ -3,6 +3,7 @@ require "logstash/inputs/base"
 require "logstash/namespace"
 require "logstash/time" # should really use the filters/date.rb bits
 require "socket"
+require 'gelfd' # gem gelfd?
 
 # Read gelf messages as events over the network.
 #
@@ -42,11 +43,6 @@ class LogStash::Inputs::Gelf < LogStash::Inputs::Base
     # gelf messages ARE json
     @format = "json"
   end # def initialize
-
-  public
-  def register
-    require 'gelfd'
-  end # def register
 
   public
   def run(output_queue)

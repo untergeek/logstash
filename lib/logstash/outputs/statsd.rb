@@ -1,5 +1,6 @@
 require "logstash/outputs/base"
 require "logstash/namespace"
+require "statsd"
 
 # statsd is a server for aggregating counters and other metrics to ship to
 # graphite.
@@ -57,7 +58,6 @@ class LogStash::Outputs::Statsd < LogStash::Outputs::Base
 
   public
   def register
-    require "statsd"
     @client = Statsd.new(@host, @port)
   end # def register
 

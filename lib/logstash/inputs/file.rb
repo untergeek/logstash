@@ -1,6 +1,7 @@
 require "logstash/inputs/base"
 require "logstash/namespace"
 require "socket" # for Socket.gethostname
+require "filewatch/tail" # gem filewatch
 
 # Stream events from files.
 #
@@ -45,7 +46,6 @@ class LogStash::Inputs::File < LogStash::Inputs::Base
 
   public
   def register
-    require "filewatch/tail"
     LogStash::Util::set_thread_name("input|file|#{path.join(":")}")
     @logger.info("Registering file input", :path => @path)
   end # def register

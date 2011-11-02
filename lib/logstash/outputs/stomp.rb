@@ -1,9 +1,9 @@
 require "logstash/outputs/base"
 require "logstash/namespace"
+require "onstomp" # gem onstomp
 
 class LogStash::Outputs::Stomp < LogStash::Outputs::Base
   config_name "stomp"
-
 
   # The address of the STOMP server.
   config :host, :validate => :string, :required => true
@@ -39,10 +39,8 @@ class LogStash::Outputs::Stomp < LogStash::Outputs::Base
     end
   end
 
-
   public
   def register
-    require "onstomp"
     @client = OnStomp::Client.new("stomp://#{@host}:#{@port}", :login => @user, :passcode => @password.value)
 
     # Handle disconnects

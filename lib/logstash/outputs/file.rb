@@ -1,5 +1,6 @@
 require "logstash/namespace"
 require "logstash/outputs/base"
+require "fileutils" # For mkdir_p
 
 # File output.
 #
@@ -31,7 +32,6 @@ class LogStash::Outputs::File < LogStash::Outputs::Base
 
   public
   def register
-    require "fileutils" # For mkdir_p
     @files = {}
   end # def register
 

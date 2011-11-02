@@ -1,5 +1,6 @@
 require "logstash/filters/base"
 require "logstash/namespace"
+require "grok-pure" # rubygem 'jls-grok'
 
 # TODO(sissel): This is not supported yet. There is a bug in grok discovery
 # that causes segfaults in libgrok.
@@ -16,9 +17,6 @@ class LogStash::Filters::Grokdiscovery < LogStash::Filters::Base
 
   public
   def register
-    gem "jls-grok", ">=0.4.3"
-    require "grok" # rubygem 'jls-grok'
-
     # TODO(sissel): Make patterns files come from the config
     @config.each do |type, typeconfig|
       @logger.debug("Registering type with grok: #{type}")
