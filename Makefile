@@ -191,8 +191,9 @@ build/docs/outputs/%.html: lib/logstash/outputs/%.rb | build/docs/outputs
 build/docs/%: docs/% lib/logstash/version.rb
 	@echo "Copying $< (to $@)"
 	-$(QUIET)mkdir -p $(shell dirname $@)
-	$(QUIET)sed -re 's/%VERSION%/$(VERSION)/g' $< > $@
-	$(QUIET)sed -re 's/%ELASTICSEARCH_VERSION%/$(ELASTICSEARCH_VERSION)/g' $< > $@
+	$(QUIET)cp $< $@
+	$(QUIET)sed -ire 's/%VERSION%/$(VERSION)/g' $@
+	$(QUIET)sed -ire 's/%ELASTICSEARCH_VERSION%/$(ELASTICSEARCH_VERSION)/g' $@
 
 build/docs/index.html: $(addprefix build/docs/,$(subst lib/logstash/,,$(subst .rb,.html,$(PLUGIN_FILES))))
 build/docs/index.html: docs/generate_index.rb lib/logstash/version.rb
