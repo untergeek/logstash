@@ -33,22 +33,16 @@ On the server collecting and indexing your logs:
 Requirements: java
 
 You'll most likely want the version of ElasticSearch specified by the
-<outputs/elasticsearch> docs. Modify this in your shell for easy downloading of
-ElasticSearch:
+<outputs/elasticsearch> docs - here's the url:
 
-    ES_PACKAGE=elasticsearch-0.17.6.zip
-    ES_DIR=${ES_PACKAGE%%.zip}
-    SITE=https://github.com/downloads/elasticsearch/elasticsearch
-    if [ ! -d "$ES_DIR" ] ; then
-      wget --no-check-certificate $SITE/$ES_PACKAGE
-      unzip $ES_PACKAGE
-    fi
+<https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-%ELASTICSEARCH_VERSION%.tar.gz>
 
 ElasticSearch requires Java (uses Lucene on the backend; if you want to know
 more read the elasticsearch docs).
 
-To start the service, run `bin/elasticsearch`. If you want to run it in the
-foreground, use 'bin/elasticsearch -f' 
+Unpack the elasticsearch download. To start the service, run
+`bin/elasticsearch`. If you want to run it in the foreground, use
+'bin/elasticsearch -f' 
 
 ## AMQP Broker
 
