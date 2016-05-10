@@ -206,7 +206,7 @@ namespace "artifact" do
 
     files.each do |path|
       next if File.directory?(path)
-      dir.input("#{path}=/opt/logstash/#{path}")
+      dir.input("#{path}=/usr/lib/logstash/#{path}")
     end
 
     basedir = File.join(File.dirname(__FILE__), "..")
