@@ -1,0 +1,61 @@
+#!/bin/bash
+
+unset CDPATH
+. "$(cd `dirname $0`/..; pwd)/bin/logstash.lib.sh"
+setup
+
+name=logstash
+
+[ -r /etc/default/$name ] && . /etc/default/$name
+[ -r /etc/sysconfig/$name ] && . /etc/sysconfig/$name
+
+# bin/logstash-plugin is a short lived ruby script thus we can use aggressive "faster starting JRuby options"
+# see https://github.com/jruby/jruby/wiki/Improving-startup-time
+export JRUBY_OPTS="$JRUBY_OPTS -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -X-C -Xcompile.invokedynamic=false"
+
+args=$@
+tempfile=$(mktemp)
+
+read -r -d '' PRESTART << EOM
+# Load the defaults
+[ -r /etc/default/$name ] && . /etc/default/$name
+[ -r /etc/sysconfig/$name ] && . /etc/sysconfig/$name
+
+/bin/touch ${LS_LOG_FILE}
+EOM
+
+# If there are args, append the path to the Logstash script
+if [ ${#args[@]} -gt 1 ]; then
+  args+=("$(cd `dirname $0`/..; pwd)/bin/logstash")
+# if there are no args, then use these defaults
+else
+  args=("--log" "$tempfile" "--overwrite" "--install" "--name" "${name}" "--user" "${name}" "--group" "${name}" "--description" "${name}" "--nice" "${LS_NICE}" "--limit-open-files" "${LS_OPEN_FILES}" "--prestart" "${PRESTART}" "$(cd `dirname $0`/..; pwd)/bin/logstash -f ${LS_CONF_DIR} -l ${LS_LOG_FILE} ${LS_OPTS}")
+fi
+
+capture="$(ruby_exec "${LOGSTASH_HOME}/lib/systeminstall/pleasewrap.rb" "${args[@]}")"
+exit_code=$?
+
+if [ $exit_code -ne 0 ]; then
+  cat $tempfile
+  echo "Unable to install system startup script for Logstash."
+else
+  if [ -f "/lib/systemd/system/logstash.service" ]; then
+    if [ ! -f "/etc/default/logstash" ]; then
+      sed -i -e 's|EnvironmentFile=/etc/default/logstash|#EnvironmentFile=/etc/default/logstash|' /lib/systemd/system/logstash.service
+    fi
+    if [ ! -f "/etc/sysconfig/logstash" ]; then
+      sed -i -e 's|EnvironmentFile=/etc/sysconfig/logstash|#EnvironmentFile=/etc/sysconfig/logstash|' /lib/systemd/system/logstash.service
+    fi
+    systemctl --system daemon-reload
+    ec=$?
+    if [ $ec -ne 0 ]; then
+      echo "'systemctl --system daemon-reload' failed. Check the output of 'systemctl status logstash.service'"
+    else
+      echo "Successfully created system startup script for Logstash"
+      rm $tempfile
+      exit 0
+    fi
+  fi
+  echo "Successfully created system startup script for Logstash"
+fi
+rm $tempfile
