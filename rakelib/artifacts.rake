@@ -11,6 +11,7 @@ namespace "artifact" do
       "bin/**/*",
       "lib/bootstrap/**/*",
       "lib/pluginmanager/**/*",
+      "lib/systeminstall/**/*",
       "patterns/**/*",
       "vendor/??*/**/*",
       # To include ruby-maven's hidden ".mvn" directory, we need to
@@ -206,7 +207,7 @@ namespace "artifact" do
 
     files.each do |path|
       next if File.directory?(path)
-      dir.input("#{path}=/usr/lib/logstash/#{path}")
+      dir.input("#{path}=/usr/share/logstash/#{path}")
     end
 
     basedir = File.join(File.dirname(__FILE__), "..")
@@ -262,7 +263,7 @@ namespace "artifact" do
         out.license = "Apache 2.0"
         out.attributes[:deb_user] = "root"
         out.attributes[:deb_group] = "root"
-        out.attributes[:deb_suggests] = "java7-runtime-headless"
+        out.attributes[:deb_suggests] = "java8-runtime-headless"
         out.config_files << "/etc/default/logstash"
         out.config_files << "/etc/logrotate.d/logstash"
         out.config_files << "/etc/init.d/logstash"
