@@ -34,7 +34,7 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 # See contents of file named in $DEFAULT for comments
 LS_USER=logstash
 LS_GROUP=logstash
-LS_HOME=/var/lib/logstash
+LS_HOME=/usr/share/logstash
 LS_HEAP_SIZE="1g"
 LS_LOG_FILE=/var/log/logstash/$NAME.log
 LS_CONF_DIR=/etc/logstash/conf.d
@@ -52,7 +52,7 @@ fi
 # Define other required variables
 PID_FILE=${LS_PIDFILE}
 
-DAEMON="/usr/lib/logstash/bin/logstash"
+DAEMON="/usr/share/logstash/bin/logstash"
 DAEMON_OPTS="-f ${LS_CONF_DIR} -l ${LS_LOG_FILE} ${LS_OPTS}"
 
 #

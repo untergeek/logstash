@@ -238,9 +238,9 @@ namespace "artifact" do
         File.join(basedir, "pkg", "logstash.default").tap do |path|
           dir.input("#{path}=/etc/sysconfig/logstash")
         end
-        File.join(basedir, "pkg", "logstash.sysv").tap do |path|
-          dir.input("#{path}=/etc/init.d/logstash")
-        end
+        # File.join(basedir, "pkg", "logstash.sysv").tap do |path|
+        #   dir.input("#{path}=/etc/init.d/logstash")
+        # end
         require "fpm/package/rpm"
         out = dir.convert(FPM::Package::RPM)
         out.license = "ASL 2.0" # Red Hat calls 'Apache Software License' == ASL
@@ -250,14 +250,14 @@ namespace "artifact" do
         out.attributes[:rpm_os] = "linux"
         out.config_files << "etc/sysconfig/logstash"
         out.config_files << "etc/logrotate.d/logstash"
-        out.config_files << "/etc/init.d/logstash"
+        # out.config_files << "/etc/init.d/logstash"
       when "debian", "ubuntu"
         File.join(basedir, "pkg", "logstash.default").tap do |path|
           dir.input("#{path}=/etc/default/logstash")
         end
-        File.join(basedir, "pkg", "logstash.sysv").tap do |path|
-          dir.input("#{path}=/etc/init.d/logstash")
-        end
+        # File.join(basedir, "pkg", "logstash.sysv").tap do |path|
+        #   dir.input("#{path}=/etc/init.d/logstash")
+        # end
         require "fpm/package/deb"
         out = dir.convert(FPM::Package::Deb)
         out.license = "Apache 2.0"
@@ -266,7 +266,7 @@ namespace "artifact" do
         out.attributes[:deb_suggests] = "java8-runtime-headless"
         out.config_files << "/etc/default/logstash"
         out.config_files << "/etc/logrotate.d/logstash"
-        out.config_files << "/etc/init.d/logstash"
+        # out.config_files << "/etc/init.d/logstash"
     end
 
     # Packaging install/removal scripts
