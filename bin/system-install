@@ -13,7 +13,7 @@ name=logstash
 # see https://github.com/jruby/jruby/wiki/Improving-startup-time
 export JRUBY_OPTS="$JRUBY_OPTS -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -X-C -Xcompile.invokedynamic=false"
 
-args=$@
+cmd=$@
 tempfile=$(mktemp)
 
 read -r -d '' PRESTART << EOM
@@ -24,15 +24,19 @@ read -r -d '' PRESTART << EOM
 /bin/touch ${LS_LOG_FILE}
 EOM
 
-# If there are args, append the path to the Logstash script
-if [ ${#args[@]} -gt 1 ]; then
-  args+=("$(cd `dirname $0`/..; pwd)/bin/logstash")
-# if there are no args, then use these defaults
+
+# If there are command-line args, use those
+if [ ${#cmd[@]} -gt 1 ]; then
+  opts=cmd
+# otherwise, use these defaults
 else
-  args=("--log" "$tempfile" "--overwrite" "--install" "--name" "${name}" "--user" "${name}" "--group" "${name}" "--description" "${name}" "--nice" "${LS_NICE}" "--limit-open-files" "${LS_OPEN_FILES}" "--prestart" "${PRESTART}" "$(cd `dirname $0`/..; pwd)/bin/logstash -f ${LS_CONF_DIR} -l ${LS_LOG_FILE} ${LS_OPTS}")
+  opts=("--log" "$tempfile" "--overwrite" "--install" "--name" "${name}" "--user" "${name}" "--group" "${name}" "--description" "${name}" "--nice" "${LS_NICE}" "--limit-open-files" "${LS_OPEN_FILES}" "--prestart" "${PRESTART}")
 fi
 
-capture="$(ruby_exec "${LOGSTASH_HOME}/lib/systeminstall/pleasewrap.rb" "${args[@]}")"
+program="$(cd `dirname $0`/..; pwd)/bin/logstash"
+args="-f ${LS_CONF_DIR} -l ${LS_LOG_FILE} ${LS_OPTS}"
+
+capture="$(ruby_exec "${LOGSTASH_HOME}/lib/systeminstall/pleasewrap.rb" "${opts[@]}" ${program} ${args})"
 exit_code=$?
 
 if [ $exit_code -ne 0 ]; then
