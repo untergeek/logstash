@@ -9,6 +9,7 @@ namespace "artifact" do
       "NOTICE.TXT",
       "CONTRIBUTORS",
       "bin/**/*",
+      "config/*",
       "lib/bootstrap/**/*",
       "lib/pluginmanager/**/*",
       "lib/systeminstall/**/*",
@@ -235,9 +236,9 @@ namespace "artifact" do
         File.join(basedir, "pkg", "logrotate.conf").tap do |path|
           dir.input("#{path}=/etc/logrotate.d/logstash")
         end
-        File.join(basedir, "pkg", "logstash.default").tap do |path|
-          dir.input("#{path}=/etc/sysconfig/logstash")
-        end
+        # File.join(basedir, "pkg", "logstash.default").tap do |path|
+        #   dir.input("#{path}=/etc/sysconfig/logstash")
+        # end
         # File.join(basedir, "pkg", "logstash.sysv").tap do |path|
         #   dir.input("#{path}=/etc/init.d/logstash")
         # end
@@ -248,13 +249,13 @@ namespace "artifact" do
         out.attributes[:rpm_user] = "root"
         out.attributes[:rpm_group] = "root"
         out.attributes[:rpm_os] = "linux"
-        out.config_files << "etc/sysconfig/logstash"
+        # out.config_files << "etc/sysconfig/logstash"
         out.config_files << "etc/logrotate.d/logstash"
         # out.config_files << "/etc/init.d/logstash"
       when "debian", "ubuntu"
-        File.join(basedir, "pkg", "logstash.default").tap do |path|
-          dir.input("#{path}=/etc/default/logstash")
-        end
+        # File.join(basedir, "pkg", "logstash.default").tap do |path|
+        #   dir.input("#{path}=/etc/default/logstash")
+        # end
         # File.join(basedir, "pkg", "logstash.sysv").tap do |path|
         #   dir.input("#{path}=/etc/init.d/logstash")
         # end
@@ -264,7 +265,7 @@ namespace "artifact" do
         out.attributes[:deb_user] = "root"
         out.attributes[:deb_group] = "root"
         out.attributes[:deb_suggests] = "java8-runtime-headless"
-        out.config_files << "/etc/default/logstash"
+        # out.config_files << "/etc/default/logstash"
         out.config_files << "/etc/logrotate.d/logstash"
         # out.config_files << "/etc/init.d/logstash"
     end
