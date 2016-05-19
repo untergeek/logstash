@@ -9,7 +9,7 @@ namespace "artifact" do
       "NOTICE.TXT",
       "CONTRIBUTORS",
       "bin/**/*",
-      "config/*",
+      "config/**/*",
       "lib/bootstrap/**/*",
       "lib/pluginmanager/**/*",
       "lib/systeminstall/**/*",
@@ -242,6 +242,12 @@ namespace "artifact" do
         # File.join(basedir, "pkg", "logstash.sysv").tap do |path|
         #   dir.input("#{path}=/etc/init.d/logstash")
         # end
+        # File.join(basedir, "pkg", "config", "settings").tap do |path|
+        #   dir.input("#{path}=/usr/share/logstash/config/settings")
+        # end
+        # File.join(basedir, "pkg", "config", "jvm.options").tap do |path|
+        #   dir.input("#{path}=/usr/share/logstash/config/jvm.options")
+        # end
         require "fpm/package/rpm"
         out = dir.convert(FPM::Package::RPM)
         out.license = "ASL 2.0" # Red Hat calls 'Apache Software License' == ASL
@@ -256,8 +262,11 @@ namespace "artifact" do
         # File.join(basedir, "pkg", "logstash.default").tap do |path|
         #   dir.input("#{path}=/etc/default/logstash")
         # end
-        # File.join(basedir, "pkg", "logstash.sysv").tap do |path|
-        #   dir.input("#{path}=/etc/init.d/logstash")
+        # File.join(basedir, "pkg", "config", "settings").tap do |path|
+        #   dir.input("#{path}=/usr/share/logstash/config/settings")
+        # end
+        # File.join(basedir, "pkg", "config", "jvm.options").tap do |path|
+        #   dir.input("#{path}=/usr/share/logstash/config/jvm.options")
         # end
         require "fpm/package/deb"
         out = dir.convert(FPM::Package::Deb)

@@ -4,62 +4,38 @@ unset CDPATH
 . "$(cd `dirname $0`/..; pwd)/bin/logstash.lib.sh"
 setup
 
-name=logstash
-
-[ -r ${LOGSTASH_HOME}/config/settings ] && . ${LOGSTASH_HOME}/config/settings
-[ -r /etc/logstash/settings ] && . /etc/logstash/settings
+if [ -r $1 ]; then
+  echo "Using provided startup.options file: ${1}"
+  . $1
+else
+  [ -r ${LOGSTASH_HOME}/config/startup.options ] && . ${LOGSTASH_HOME}/config/startup.options
+  [ -r /etc/logstash/startup.options ] && . /etc/logstash/startup.options
+fi
 
 # bin/logstash-plugin is a short lived ruby script thus we can use aggressive "faster starting JRuby options"
 # see https://github.com/jruby/jruby/wiki/Improving-startup-time
 export JRUBY_OPTS="$JRUBY_OPTS -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -X-C -Xcompile.invokedynamic=false"
 
-cmd=$@
 tempfile=$(mktemp)
 
 read -r -d '' PRESTART << EOM
 # Load the defaults
-[ -r ${LOGSTASH_HOME}/config/settings ] && . ${LOGSTASH_HOME}/config/settings
-[ -r /etc/logstash/settings ] && . /etc/logstash/settings
+[ -r ${LOGSTASH_HOME}/config/startup.options ] && . ${LOGSTASH_HOME}/config/startup.options
+[ -r /etc/logstash/startup.options ] && . /etc/logstash/startup.options
 
 /bin/touch ${LS_LOG_FILE}
 EOM
 
-
-# If there are command-line args, use those
-if [ ${#cmd[@]} -gt 1 ]; then
-  opts=cmd
-# otherwise, use these defaults
-else
-  opts=("--log" "$tempfile" "--overwrite" "--install" "--name" "${name}" "--user" "${name}" "--group" "${name}" "--description" "${name}" "--nice" "${LS_NICE}" "--limit-open-files" "${LS_OPEN_FILES}" "--prestart" "${PRESTART}")
-fi
-
+opts=("--log" "$tempfile" "--overwrite" "--install" "--name" "${INIT_NAME}" "--user" "${LS_USER}" "--group" "${LS_GROUP}" "--description" "${INIT_DESCRIPTION}" "--nice" "${LS_NICE}" "--limit-open-files" "${LS_OPEN_FILES}" "--prestart" "${PRESTART}")
 program="$(cd `dirname $0`/..; pwd)/bin/logstash"
-args="-f ${LS_CONF_DIR} -l ${LS_LOG_FILE} ${LS_OPTS}"
 
-capture="$(ruby_exec "${LOGSTASH_HOME}/lib/systeminstall/pleasewrap.rb" "${opts[@]}" ${program} ${args})"
+capture="$(ruby_exec "${LOGSTASH_HOME}/lib/systeminstall/pleasewrap.rb" "${opts[@]}" ${program} ${INIT_ARGS})"
 exit_code=$?
 
 if [ $exit_code -ne 0 ]; then
   cat $tempfile
   echo "Unable to install system startup script for Logstash."
 else
-  # if [ -f "/lib/systemd/system/logstash.service" ]; then
-  #   if [ ! -f "/etc/default/logstash" ]; then
-  #     sed -i -e 's|EnvironmentFile=/etc/default/logstash|#EnvironmentFile=/etc/default/logstash|' /lib/systemd/system/logstash.service
-  #   fi
-  #   if [ ! -f "/etc/sysconfig/logstash" ]; then
-  #     sed -i -e 's|EnvironmentFile=/etc/sysconfig/logstash|#EnvironmentFile=/etc/sysconfig/logstash|' /lib/systemd/system/logstash.service
-  #   fi
-  #   systemctl --system daemon-reload
-  #   ec=$?
-  #   if [ $ec -ne 0 ]; then
-  #     echo "'systemctl --system daemon-reload' failed. Check the output of 'systemctl status logstash.service'"
-  #   else
-  #     echo "Successfully created system startup script for Logstash"
-  #     rm $tempfile
-  #     exit 0
-  #   fi
-  # fi
   echo "Successfully created system startup script for Logstash"
 fi
 rm $tempfile

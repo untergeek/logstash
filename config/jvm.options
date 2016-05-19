@@ -27,10 +27,17 @@
 # disable calls to System#gc
 -XX:+DisableExplicitGC
 
-# pre-touch memory pages used by the JVM during initialization
-#-XX:+AlwaysPreTouch
+## Locale
+# Set the locale language
+#-Duser.language=en
 
-## basic
+# Set the locale country
+#-Duser.country=US
+
+# Set the locale variant, if any
+#-Duser.variant=
+
+## Basic settings
 
 # set the I/O temp directory
 -Djava.io.tmpdir=$HOME
@@ -52,7 +59,7 @@
 
 # specify an alternative path for heap dumps
 # ensure the directory exists and has sufficient space
-#-XX:HeapDumpPath=${LOGSTASH_HOME}/heapdump.hprof"
+#-XX:HeapDumpPath=${LOGSTASH_HOME}/heapdump.hprof
 
 ## GC logging
 #-XX:+PrintGCDetails

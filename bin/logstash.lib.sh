@@ -130,7 +130,9 @@ setup_ruby() {
 jruby_opts() {
   printf "%s" "--1.9"
   for i in $JAVA_OPTS ; do
-    printf "%s" " -J$i"
+    if [ "x$i" != "x" ] && [ "x$i" != "x " ]; then
+      printf "%s" " -J$i"
+    fi
   done
 }
 
@@ -169,8 +171,8 @@ ruby_exec() {
     # $VENDORED_JRUBY is non-empty so use the vendored JRuby
 
     if [ "$DEBUG" ] ; then
-      echo "DEBUG: exec ${JRUBY_BIN} $(jruby_opts) "-J$HEAP_DUMP_PATH" $@"
+      echo "DEBUG: exec ${JRUBY_BIN} $(jruby_opts) $@"
     fi
-    exec "${JRUBY_BIN}" $(jruby_opts) "-J$HEAP_DUMP_PATH" "$@"
+    exec "${JRUBY_BIN}" $(jruby_opts) "$@"
   fi
 }

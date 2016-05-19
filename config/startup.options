@@ -1,0 +1,54 @@
+################################################################################
+# Startup settings for Logstash
+#
+# These settings are used by bin/system-install to create a custom startup
+# script for Logstash.  It should automagically use the init system (systemd,
+# upstart, sysv, etc.) that your Linux distribution uses.
+################################################################################
+
+# Override Java location
+JAVACMD=/usr/bin/java
+
+# Set a home directory
+LS_HOME=/usr/share/logstash
+
+# Arguments to pass to logstash
+LS_OPTS=""
+
+# Arguments to pass to java
+LS_JAVA_OPTS=""
+
+# pidfiles aren't used the same way for upstart and systemd; this is for sysv users.
+LS_PIDFILE=/var/run/logstash.pid
+
+# user and group id to be invoked as
+LS_USER=logstash
+LS_GROUP=logstash
+
+# Logstash logging
+LS_LOG_FILE=/var/log/logstash/logstash.log
+
+# Enable GC logging by uncommenting the appropriate lines in the GC logging
+# section in jvm.options
+LS_GC_LOG_FILE=/var/log/logstash/gc.log
+
+# logstash configuration directory
+LS_CONF_DIR=/etc/logstash/conf.d
+
+# Open file limit
+LS_OPEN_FILES=16384
+
+# Nice level
+LS_NICE=19
+
+# If this is set to 1, then when `stop` is called, if the process has
+# not exited within a reasonable time, SIGKILL will be sent next.
+# The default behavior is to simply log a message "program stop failed; still running"
+#KILL_ON_STOP_TIMEOUT=0
+
+# Change these to have the init script named and described differently
+# This is useful when running multiple instances of Logstash on the same
+# physical box or vm
+INIT_NAME="logstash"
+INIT_DESCRIPTION="logstash"
+INIT_ARGS="-f ${LS_CONF_DIR} -l ${LS_LOG_FILE} ${LS_OPTS}"
